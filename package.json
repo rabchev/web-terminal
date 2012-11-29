@@ -1,0 +1,31 @@
+{
+    "name": "browser-shell",
+    "description": "",
+    "version": "0.0.1",
+    "author": "Boyan Rabchev <boyan@rabchev.com>",
+    "contributors": [ 
+        { "name": "Boyan Rabchev", "email": "boyan@rabchev.com" }
+    ],
+    "repository": "https://github.com/rabchev/node-browser-shell.git",
+    "main": "index",
+    "preferGlobal": "false",
+    "dependencies": {
+        "send": "*",
+        "connect": "*",
+        "socket.io": "*"
+    },
+    "devDependencies": {
+        "nodeunit": "*"
+    },
+    "keywords": [
+        "command",
+        "shell",
+        "command-line",
+        "text",
+        "terminal",
+        "browser",
+        "web",
+        "node"
+    ],
+    "engines": { "node": ">=0.8.6" }
+}
