@@ -12,7 +12,8 @@
     "dependencies": {
         "send": "*",
         "connect": "*",
-        "socket.io": "*"
+        "socket.io": "*",
+        "commander": "*"
     },
     "devDependencies": {
         "nodeunit": "*"
@@ -27,5 +28,12 @@
         "web",
         "node"
     ],
+    "preferGlobal": "false",
+    "bin": {
+        "browser-shell": "./bin/run"
+    },
+    "scripts": {
+        "start": "node ./bin/run"
+    },
     "engines": { "node": ">=0.8.6" }
 }

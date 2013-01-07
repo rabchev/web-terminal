@@ -1,0 +1,75 @@
+body {
+	background-color: #000000;
+	color: #00AA00;
+	font-family: Lucida Console,CommPlus, MS LineDraw, Telix TT Terminal,monospace;
+	font-size: 21px;
+	height: 100%;
+}
+
+.console {
+	background-color: #000000;
+	color: #00AA00;
+	cursor: crosshair;
+	font-family: Lucida Console,CommPlus, MS LineDraw, Telix TT Terminal,monospace;
+	font-size: 11px;
+}
+
+.input {
+	background-color: #000000;
+	color: #00AA00;
+	font-family: Lucida Console,CommPlus, MS LineDraw, Telix TT Terminal,monospace;
+	font-size: 11px;
+	height: 500px;
+	width: 100%;
+}
+
+i, strong {
+	color: #005500;
+}
+
+input, textarea
+{
+	color: #00bb00;
+	font-family: Lucida Console,CommPlus, MS LineDraw, Telix TT Terminal,monospace;
+	font-size: 11px;
+	font-size: 13px;
+}
+
+.btn {
+	background-color: #003300;
+	border: 1px #00bb00 solid;
+	height: 19px;
+}
+
+
+.starHighlight {
+	color: #00FF00;
+}
+.starNoHighlight {
+	color: #00AA00;
+}
+
+a:link {
+	color: #00AA00;
+	text-decoration: none;
+}
+
+a:visited {
+	color: #00AA00;
+	text-decoration: none;
+}
+
+a:focus {
+	color: #00AA00;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #00AA00;
+	text-decoration: none;
+}
+ 
+a:active {
+	color: #00AA00;
+	text-decoration: none;
+}
