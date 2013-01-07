@@ -6,6 +6,14 @@
     "contributors": [ 
         { "name": "Boyan Rabchev", "email": "boyan@rabchev.com" }
     ],
+    "config": {
+        "port": "80",
+        "root": "/terminal",
+        "requireSSL": "false",
+        "key": "",
+        "cert": "",
+        "pfx": ""
+    },
     "repository": "https://github.com/rabchev/node-browser-shell.git",
     "main": "index",
     "preferGlobal": "false",
