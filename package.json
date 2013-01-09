@@ -1,7 +1,7 @@
 {
     "name": "browser-shell",
     "description": "",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "author": "Boyan Rabchev <boyan@rabchev.com>",
     "contributors": [ 
         { "name": "Boyan Rabchev", "email": "boyan@rabchev.com" }
@@ -38,10 +38,10 @@
     ],
     "preferGlobal": "false",
     "bin": {
-        "browser-shell": "./bin/run"
+        "browser-shell": "./bin/run.js"
     },
     "scripts": {
-        "start": "node ./bin/run"
+        "start": "node ./bin/run.js"
     },
     "engines": { "node": ">=0.8.6" }
 }
