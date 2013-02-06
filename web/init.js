@@ -13,15 +13,14 @@
     };
     
     $(window.document).keydown(function (e) {
-        if (e.keyCode === 8) {
-            currentLine = currentLine.slice(0, -1);
-            content.html(currentLine);
-        }
+//        if (e.keyCode === 8) {
+//            currentLine = currentLine.slice(0, -1);
+//            content.html(currentLine);
+//        }
     });
   
     $(window.document).keypress(function (e) {
-  	
-        //var letter = codes["" + e.keyCode];
+        
         var letter = String.fromCharCode(e.keyCode);
   	
         // Handle 'enter'.
@@ -44,7 +43,7 @@
             
             if (letter) {
                 currentLine += letter;
-                content.html(currentLine);
+                content.append(letter);
             } else {
                 console.log(e.keyCode);
             }
