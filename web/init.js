@@ -4,29 +4,62 @@
 (function () {
     "use strict";
     
-    var socket = io.connect(),
-        content = $("#content"),
+    var socket      = io.connect(),
+        content     = $("#content"),
+        lines       = [""],
+        linePos     = -1,
         currentLine = "";
         
     window.APP = {
         socket: socket
     };
     
-    $(window.document).keydown(function (e) {
-        if (e.keyCode === 8) {
-            currentLine = currentLine.slice(0, -1);
-            //content.html(currentLine);
+    function appendContent(data) {
+        content.append(data);
+        
+        $('html, body').animate({
+            scrollTop: $(window.document).height()
+        }, 500);
+    }
+    
+    function appendLine() {
+        if (currentLine.length > 0) {
+            content.html(content.html().slice(0, currentLine.length * -1));
         }
+        currentLine = lines[linePos];
+        appendContent(currentLine);
+    }
+    
+    $(window.document).keydown(function (e) {
+        switch (e.keyCode) {
+        case 8:
+            if (currentLine.length > 0) {
+                currentLine = currentLine.slice(0, -1);
+                content.html(content.html().slice(0, -1));
+            }
+            break;
+        case 38:
+            if (linePos < lines.length - 1) {
+                linePos++;
+                appendLine();
+            }
+            return false;
+        case 40:
+            if (linePos > 0) {
+                linePos--;
+                appendLine();
+            }
+            return false;
+        }
+    });
+    
+    socket.on("exit", function (data) {
+        appendContent("<br />~$ ");
     });
     
     socket.on("console", function (data) {
         data = data.replace(/\n/g, "<br />");
-        content.append(data + "<br />~$");
-        
-        $('html, body').animate({
-            scrollTop: $(window.document).height()
-        },
-        1500);
+        appendContent(data);
     });
   
     $(window.document).keypress(function (e) {
@@ -38,11 +71,16 @@
             
             if (currentLine.length > 0) {
                 // Send...
+                
+                appendContent("<br />");
                 socket.emit("console", currentLine);
+                if (currentLine !== lines[1]) {
+                    lines.splice(1, 0, currentLine);
+                }
                 currentLine = "";
-                content.append("<br />");
+                linePos = 0;
             } else {
-                content.append("<br />~$");
+                appendContent("<br />~$ ");
             }
         } else {
             
