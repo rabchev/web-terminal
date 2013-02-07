@@ -13,10 +13,20 @@
     };
     
     $(window.document).keydown(function (e) {
-//        if (e.keyCode === 8) {
-//            currentLine = currentLine.slice(0, -1);
-//            content.html(currentLine);
-//        }
+        if (e.keyCode === 8) {
+            currentLine = currentLine.slice(0, -1);
+            //content.html(currentLine);
+        }
+    });
+    
+    socket.on("console", function (data) {
+        data = data.replace(/\n/g, "<br />");
+        content.append(data + "<br />~$");
+        
+        $('html, body').animate({
+            scrollTop: $(window.document).height()
+        },
+        1500);
     });
   
     $(window.document).keypress(function (e) {
@@ -25,20 +35,15 @@
   	
         // Handle 'enter'.
         if (e.keyCode === 13) {
-        
-            console.log("sending console");
             
-            // Send...
-            socket.emit("console", currentLine, function (output) {
-                output = output.replace(/\n/g, "<br />");
-                
-                console.log(output);
-                content.append(output + "<br />");
-            });
-            
-            currentLine = "";
-            content.append("<br />");
-        
+            if (currentLine.length > 0) {
+                // Send...
+                socket.emit("console", currentLine);
+                currentLine = "";
+                content.append("<br />");
+            } else {
+                content.append("<br />~$");
+            }
         } else {
             
             if (letter) {
