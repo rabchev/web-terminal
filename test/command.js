@@ -80,17 +80,19 @@ module.exports = testCase({
     "Command Line With Windows Path": function (test) {
         "use strict";
         
-        test.expect(8);
+        test.expect(10);
         debugger;
-        var args = command.parse("    works   -o    -d  .\\Projects\\entree.js -i \"test project\" &  ");
-        test.equal(args.length, 7);
+        var args = command.parse("    works   -o    -d  .\\Projects\\entree.js -i \"test project\" -b \"Blah Balh\" &  ");
+        test.equal(args.length, 9);
         test.equal(args[0], "works");
         test.equal(args[1], "-o");
         test.equal(args[2], "-d");
         test.equal(args[3], ".\\Projects\\entree.js");
         test.equal(args[4], "-i");
         test.equal(args[5], "test project");
-        test.equal(args[6], "&");
+        test.equal(args[6], "-b");
+        test.equal(args[7], "Blah Balh");
+        test.equal(args[8], "&");
         
         test.done();
     }
