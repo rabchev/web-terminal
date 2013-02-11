@@ -10,13 +10,7 @@
         linePos     = -1,
         currentLine = "",
         index       = {};
-    
-    function SeqVal(seq, val, closure) {
-        this.sequance = seq;
-        this.value = val;
-        this.closure = closure;
-    }
-    
+        
     function addSequence(seq, val, closure) {
         
         var prnt    = index,
@@ -25,16 +19,12 @@
             prop,
             i;
         
-        if (closure) {
-            val.closure = closure;
-        }
-        
         for (i = 0; i <= len; i++) {
             prop = seq[i];
             chld = prnt[prop];
             
             if (!chld) {
-                prnt[prop] = chld = (i === len) ? new SeqVal(seq, val, closure) : {};
+                prnt[prop] = chld = (i === len) ? { sequance: seq, value: val, closure: closure} : {};
             }
             prnt = chld;
         }
