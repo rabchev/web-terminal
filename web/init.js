@@ -11,7 +11,13 @@
         currentLine = "",
         index       = {};
     
-    function addSequence(seq, val) {
+    function SeqVal(seq, val, closure) {
+        this.sequance = seq;
+        this.value = val;
+        this.closure = closure;
+    }
+    
+    function addSequence(seq, val, closure) {
         
         var prnt    = index,
             len     = seq.length - 1,
@@ -19,12 +25,16 @@
             prop,
             i;
         
+        if (closure) {
+            val.closure = closure;
+        }
+        
         for (i = 0; i <= len; i++) {
             prop = seq[i];
             chld = prnt[prop];
             
             if (!chld) {
-                prnt[prop] = chld = (i === len) ? val : {};
+                prnt[prop] = chld = (i === len) ? new SeqVal(seq, val, closure) : {};
             }
             prnt = chld;
         }
@@ -36,42 +46,44 @@
     addSequence("\r\n", "<br />");
     addSequence("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
     addSequence("  ", "&nbsp;&nbsp;");
-    addSequence("\x1B[1m", "<b>");
-    addSequence("\x1B[22m", "</b>");
-    addSequence("\x1B[3m", "<i>");
-    addSequence("\x1B[23m", "</i>");
-    addSequence("\x1B[4m", "<u>");
-    addSequence("\x1B[24m", "</u>");
-    addSequence("\x1B[7m", "<span class=\"inverse\">");
-    addSequence("\x1B[27m", "</span>");
-    addSequence("\x1B[9m", "<del>");
-    addSequence("\x1B[29m", "</del>");
+    addSequence("\x1B[m", "[all]");
+    addSequence("\x1B[0m", "[all]");
+    addSequence("\x1B[1m", "<b>", "</b>");
+    addSequence("\x1B[22m", "</b>", true);
+    addSequence("\x1B[3m", "<i>", "</i>");
+    addSequence("\x1B[23m", "</i>", true);
+    addSequence("\x1B[4m", "<u>", "</u>");
+    addSequence("\x1B[24m", "</u>", true);
+    addSequence("\x1B[7m", "<span class=\"inverse\">", "</span>");
+    addSequence("\x1B[27m", "</span>", true);
+    addSequence("\x1B[9m", "<del>", "</del>");
+    addSequence("\x1B[29m", "</del>", true);
     
     // close style
-    addSequence("\x1B[39m", "</span>");
+    addSequence("\x1B[39m", "</span>", true);
     
     // grayscale
-    addSequence("\x1B[90m", "<span style=\"color:grey;\">");
+    addSequence("\x1B[90m", "<span style=\"color:grey;\">", "</span>");
     
     // fore colors
-    addSequence("\x1B[30m", "<span style=\"color:black;\">");
-    addSequence("\x1B[31m", "<span style=\"color:red;\">");
-    addSequence("\x1B[32m", "<span style=\"color:green;\">");
-    addSequence("\x1B[33m", "<span style=\"color:yellow;\">");
-    addSequence("\x1B[34m", "<span style=\"color:blue;\">");
-    addSequence("\x1B[35m", "<span style=\"color:magenta;\">");
-    addSequence("\x1B[36m", "<span style=\"color:cyan;\">");
-    addSequence("\x1B[37m", "<span style=\"color:white;\">");
+    addSequence("\x1B[30m", "<span style=\"color:black;\">", "</span>");
+    addSequence("\x1B[31m", "<span style=\"color:red;\">", "</span>");
+    addSequence("\x1B[32m", "<span style=\"color:green;\">", "</span>");
+    addSequence("\x1B[33m", "<span style=\"color:yellow;\">", "</span>");
+    addSequence("\x1B[34m", "<span style=\"color:blue;\">", "</span>");
+    addSequence("\x1B[35m", "<span style=\"color:magenta;\">", "</span>");
+    addSequence("\x1B[36m", "<span style=\"color:cyan;\">", "</span>");
+    addSequence("\x1B[37m", "<span style=\"color:white;\">", "</span>");
     
     // background colors
-    addSequence("\x1B[40m", "<span style=\"background-color:black;\">");
-    addSequence("\x1B[41m", "<span style=\"background-color:red;\">");
-    addSequence("\x1B[42m", "<span style=\"background-color:green;\">");
-    addSequence("\x1B[43m", "<span style=\"background-color:yellow;\">");
-    addSequence("\x1B[44m", "<span style=\"background-color:blue;\">");
-    addSequence("\x1B[45m", "<span style=\"background-color:magenta;\">");
-    addSequence("\x1B[46m", "<span style=\"background-color:cyan;\">");
-    addSequence("\x1B[47m", "<span style=\"background-color:white;\">");
+    addSequence("\x1B[40m", "<span style=\"background-color:black;\">", "</span>");
+    addSequence("\x1B[41m", "<span style=\"background-color:red;\">", "</span>");
+    addSequence("\x1B[42m", "<span style=\"background-color:green;\">", "</span>");
+    addSequence("\x1B[43m", "<span style=\"background-color:yellow;\">", "</span>");
+    addSequence("\x1B[44m", "<span style=\"background-color:blue;\">", "</span>");
+    addSequence("\x1B[45m", "<span style=\"background-color:magenta;\">", "</span>");
+    addSequence("\x1B[46m", "<span style=\"background-color:cyan;\">", "</span>");
+    addSequence("\x1B[47m", "<span style=\"background-color:white;\">", "</span>");
     
     window.APP = {
         socket: socket
@@ -96,18 +108,35 @@
     function convertToHtml(data) {
         
         var i,
+            j,
             chr,
-            output  = "",
-            idx     = index,
-            seq     = 0;
+            output      = "",
+            idx         = index,
+            seq         = 0,
+            closures    = [],
+            closure;
         
         
         for (i = 0; i < data.length; i++) {
             chr = data[i];
             idx = idx[chr];
             if (idx) {
-                if (typeof idx === "string") {
-                    output += idx;
+                if (idx.sequance) {
+                    if (idx.value === "[all]") {
+                        while (closures.length > 0) {
+                            output += closures.pop();
+                        }
+                    } else {
+                        output += idx.value;
+                        
+                        if (idx.closure) {
+                            if (idx.closure === true) {
+                                closures.pop();
+                            } else {
+                                closures.push(idx.closure);
+                            }
+                        }
+                    }
                     idx = index;
                     seq = 0;
                 } else {
