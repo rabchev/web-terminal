@@ -9,7 +9,48 @@
         lines       = [""],
         linePos     = -1,
         currentLine = "",
-        index       = {};
+        index       = {},
+        vt100       = {
+            ""      : "[all]",
+            "0"     : "[all]",
+            "1"     : ["<b>", "</b>"],
+            "01"    : ["<b>", "</b>"],
+            "22"    : "</b>",
+            "3"     : ["<i>", "</i>"],
+            "03"    : ["<i>", "</i>"],
+            "23"    : "<i>",
+            "4"     : ["<u>", "</u>"],
+            "04"    : ["<u>", "</u>"],
+            "24"    : "</u>",
+            "7"     : ["<span class=\"inverse\">", "</span>"],
+            "07"    : ["<span class=\"inverse\">", "</span>"],
+            "27"    : "</span>",
+            "9"     : ["<del>", "</del>"],
+            "09"    : ["<del>", "</del>"],
+            "29"    : "</del>",
+            "39"    : "</span>",
+            "90"    : ["<span style=\"color:grey;\">", "</span>"],
+            "30"    : ["<span style=\"color:black;\">", "</span>"],
+            "31"    : ["<span style=\"color:red;\">", "</span>"],
+            "32"    : ["<span style=\"color:green;\">", "</span>"],
+            "33"    : ["<span style=\"color:yellow;\">", "</span>"],
+            "34"    : ["<span style=\"color:blue;\">", "</span>"],
+            "35"    : ["<span style=\"color:magenta;\">", "</span>"],
+            "36"    : ["<span style=\"color:cyan;\">", "</span>"],
+            "37"    : ["<span style=\"color:white;\">", "</span>"],
+            "40"    : ["<span style=\"background-color:black;\">", "</span>"],
+            "41"    : ["<span style=\"background-color:red;\">", "</span>"],
+            "42"    : ["<span style=\"background-color:green;\">", "</span>"],
+            "43"    : ["<span style=\"background-color:yellow;\">", "</span>"],
+            "44"    : ["<span style=\"background-color:blue;\">", "</span>"],
+            "45"    : ["<span style=\"background-color:magenta;\">", "</span>"],
+            "46"    : ["<span style=\"background-color:cyan;\">", "</span>"],
+            "47"    : ["<span style=\"background-color:white;\">", "</span>"]
+        };
+    
+    function parseVT100(i, data, output) {
+        
+    }
         
     function addSequence(seq, val, closure) {
         
@@ -36,44 +77,7 @@
     addSequence("\r\n", "<br />");
     addSequence("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
     addSequence("  ", "&nbsp;&nbsp;");
-    addSequence("\x1B[m", "[all]");
-    addSequence("\x1B[0m", "[all]");
-    addSequence("\x1B[1m", "<b>", "</b>");
-    addSequence("\x1B[22m", "</b>", true);
-    addSequence("\x1B[3m", "<i>", "</i>");
-    addSequence("\x1B[23m", "</i>", true);
-    addSequence("\x1B[4m", "<u>", "</u>");
-    addSequence("\x1B[24m", "</u>", true);
-    addSequence("\x1B[7m", "<span class=\"inverse\">", "</span>");
-    addSequence("\x1B[27m", "</span>", true);
-    addSequence("\x1B[9m", "<del>", "</del>");
-    addSequence("\x1B[29m", "</del>", true);
-    
-    // close style
-    addSequence("\x1B[39m", "</span>", true);
-    
-    // grayscale
-    addSequence("\x1B[90m", "<span style=\"color:grey;\">", "</span>");
-    
-    // fore colors
-    addSequence("\x1B[30m", "<span style=\"color:black;\">", "</span>");
-    addSequence("\x1B[31m", "<span style=\"color:red;\">", "</span>");
-    addSequence("\x1B[32m", "<span style=\"color:green;\">", "</span>");
-    addSequence("\x1B[33m", "<span style=\"color:yellow;\">", "</span>");
-    addSequence("\x1B[34m", "<span style=\"color:blue;\">", "</span>");
-    addSequence("\x1B[35m", "<span style=\"color:magenta;\">", "</span>");
-    addSequence("\x1B[36m", "<span style=\"color:cyan;\">", "</span>");
-    addSequence("\x1B[37m", "<span style=\"color:white;\">", "</span>");
-    
-    // background colors
-    addSequence("\x1B[40m", "<span style=\"background-color:black;\">", "</span>");
-    addSequence("\x1B[41m", "<span style=\"background-color:red;\">", "</span>");
-    addSequence("\x1B[42m", "<span style=\"background-color:green;\">", "</span>");
-    addSequence("\x1B[43m", "<span style=\"background-color:yellow;\">", "</span>");
-    addSequence("\x1B[44m", "<span style=\"background-color:blue;\">", "</span>");
-    addSequence("\x1B[45m", "<span style=\"background-color:magenta;\">", "</span>");
-    addSequence("\x1B[46m", "<span style=\"background-color:cyan;\">", "</span>");
-    addSequence("\x1B[47m", "<span style=\"background-color:white;\">", "</span>");
+    addSequence("\x1B[", parseVT100);
     
     window.APP = {
         socket: socket
@@ -111,7 +115,8 @@
             chr = data[i];
             idx = idx[chr];
             if (idx) {
-                if (idx.sequance) {
+                switch (typeof idx.value) {
+                case "string":
                     if (idx.value === "[all]") {
                         while (closures.length > 0) {
                             output += closures.pop();
@@ -129,8 +134,13 @@
                     }
                     idx = index;
                     seq = 0;
-                } else {
+                    break;
+                case "function":
+                    idx.value(i, data, output);
+                    break;
+                default:
                     seq++;
+                    break;
                 }
             } else {
                 idx = index;
