@@ -230,7 +230,15 @@
     });
     
     socket.on("exit", function (data) {
+        if (data) {
+            appendContent(data);
+        }
         appendContent("<br />~$ ");
+    });
+            
+    socket.on("quit", function (data) {
+        window.open('', '_self', '');
+        window.close();
     });
     
     socket.on("console", function (data) {
