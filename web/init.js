@@ -1,4 +1,4 @@
-/*jslint plusplus: true, devel: true, nomen: true, vars: true, indent: 4, maxerr: 50 */
+/*jslint plusplus: true, devel: true, nomen: true, vars: true, continue: true, indent: 4, maxerr: 50 */
 /*global window, io, $ */
 
 (function () {
@@ -11,24 +11,24 @@
         currentLine = "",
         index       = {},
         vt100       = {
-            ""      : "[all]",
-            "0"     : "[all]",
+            ""      : ["", false],
+            "0"     : ["", false],
             "1"     : ["<b>", "</b>"],
             "01"    : ["<b>", "</b>"],
-            "22"    : "</b>",
+            "22"    : ["</b>", true],
             "3"     : ["<i>", "</i>"],
             "03"    : ["<i>", "</i>"],
-            "23"    : "<i>",
+            "23"    : ["</i>", true],
             "4"     : ["<u>", "</u>"],
             "04"    : ["<u>", "</u>"],
-            "24"    : "</u>",
+            "24"    : ["</u>", true],
             "7"     : ["<span class=\"inverse\">", "</span>"],
             "07"    : ["<span class=\"inverse\">", "</span>"],
-            "27"    : "</span>",
+            "27"    : ["</span>", true],
             "9"     : ["<del>", "</del>"],
             "09"    : ["<del>", "</del>"],
-            "29"    : "</del>",
-            "39"    : "</span>",
+            "29"    : ["</del>", true],
+            "39"    : ["</span>", true],
             "90"    : ["<span style=\"color:grey;\">", "</span>"],
             "30"    : ["<span style=\"color:black;\">", "</span>"],
             "31"    : ["<span style=\"color:red;\">", "</span>"],
@@ -48,8 +48,49 @@
             "47"    : ["<span style=\"background-color:white;\">", "</span>"]
         };
     
-    function parseVT100(i, data, output) {
+    function parseVT100(i, data, closures) {
+        var code    = "",
+            output  = "",
+            val,
+            curr,
+            clsr;
         
+        while (true) {
+            curr = data[++i];
+            if (curr === "m" || curr === ";") {
+                val = vt100[code];
+                if (val) {
+                    output += val[0];
+                    clsr = val[1];
+                    
+                    if (clsr === true) {
+                        closures.pop();
+                    } else if (clsr === false) {
+                        while (closures.length > 0) {
+                            output += closures.pop();
+                        }
+                    } else if (clsr) {
+                        closures.push(clsr);
+                    }
+                    
+                    if (curr === ";") {
+                        code = "";
+                        continue;
+                    } else {
+                        break;
+                    }
+                } else {
+                    output += code;
+                    break;
+                }
+            } else if (i === data.length) {
+                output += code;
+                break;
+            }
+            code += curr;
+        }
+        
+        return { output: output, i: i };
     }
         
     function addSequence(seq, val, closure) {
@@ -108,7 +149,8 @@
             idx         = index,
             seq         = 0,
             closures    = [],
-            closure;
+            closure,
+            res;
         
         
         for (i = 0; i < data.length; i++) {
@@ -117,26 +159,16 @@
             if (idx) {
                 switch (typeof idx.value) {
                 case "string":
-                    if (idx.value === "[all]") {
-                        while (closures.length > 0) {
-                            output += closures.pop();
-                        }
-                    } else {
-                        output += idx.value;
-                        
-                        if (idx.closure) {
-                            if (idx.closure === true) {
-                                closures.pop();
-                            } else {
-                                closures.push(idx.closure);
-                            }
-                        }
-                    }
+                    output += idx.value;
                     idx = index;
                     seq = 0;
                     break;
                 case "function":
-                    idx.value(i, data, output);
+                    res = idx.value(i, data, closures);
+                    i = res.i;
+                    output += res.output;
+                    idx = index;
+                    seq = 0;
                     break;
                 default:
                     seq++;
@@ -148,10 +180,26 @@
                 if (seq > 0) {
                     i = i - seq;
                     seq = 0;
-                    output += data[i];
-                } else {
-                    output += chr;
+                    chr = data[i];
                 }
+                switch (chr) {
+                case "<":
+                    chr = "&lt;";
+                    break;
+                case ">":
+                    chr = "&gt;";
+                    break;
+                case "&":
+                    chr = "&amp;";
+                    break;
+                case "\"":
+                    chr = "&quot;";
+                    break;
+                case "'":
+                    chr = "&#39;";
+                    break;
+                }
+                output += chr;
             }
         }
         
