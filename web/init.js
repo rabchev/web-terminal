@@ -235,11 +235,6 @@
         }
         appendContent("<br />~$ ");
     });
-            
-    socket.on("quit", function (data) {
-        window.open('', '_self', '');
-        window.close();
-    });
     
     socket.on("console", function (data) {
         appendContent(convertToHtml(data));
@@ -254,14 +249,19 @@
             
             if (currentLine.length > 0) {
                 // Send...
-                
-                appendContent("<br />");
-                socket.emit("console", currentLine);
-                if (currentLine !== lines[1]) {
-                    lines.splice(1, 0, currentLine);
+                if (currentLine === "exit") {
+                    socket.disconnect();
+                    window.open('', '_self', '');
+                    window.close();
+                } else {
+                    appendContent("<br />");
+                    socket.emit("console", currentLine);
+                    if (currentLine !== lines[1]) {
+                        lines.splice(1, 0, currentLine);
+                    }
+                    currentLine = "";
+                    linePos = 0;
                 }
-                currentLine = "";
-                linePos = 0;
             } else {
                 appendContent("<br />~$ ");
             }
