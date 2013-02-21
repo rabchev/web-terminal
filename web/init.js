@@ -46,7 +46,10 @@
             "45"    : ["<span style=\"background-color:magenta;\">", "</span>"],
             "46"    : ["<span style=\"background-color:cyan;\">", "</span>"],
             "47"    : ["<span style=\"background-color:white;\">", "</span>"]
-        };
+        },
+        prompt      = "~$",
+        uiLineIdx   = 0,
+        uiLineEl;
     
     function parseVT100(i, data, closures) {
         var code    = "",
@@ -127,7 +130,7 @@
     function appendContent(data) {
         content.append(data);
         
-        $('html, body').animate({
+        $("html, body").animate({
             scrollTop: $(window.document).height()
         }, 500);
     }
@@ -138,6 +141,12 @@
         }
         currentLine = lines[linePos];
         appendContent(currentLine);
+    }
+    
+    function addUiLine() {
+        var id = "ln" + ++uiLineIdx;
+        appendContent("<p id=\"" + id + "\">" + prompt + "<span id=\"cursor\" class=\"inverse\">&nbsp;</span></p>");
+        uiLineEl = $("#" + id);
     }
     
     function convertToHtml(data) {
@@ -233,7 +242,7 @@
         if (data) {
             appendContent(data);
         }
-        appendContent("<br />~$ ");
+        addUiLine();
     });
     
     socket.on("console", function (data) {
@@ -254,7 +263,6 @@
                     window.open('', '_self', '');
                     window.close();
                 } else {
-                    appendContent("<br />");
                     socket.emit("console", currentLine);
                     if (currentLine !== lines[1]) {
                         lines.splice(1, 0, currentLine);
@@ -263,7 +271,7 @@
                     linePos = 0;
                 }
             } else {
-                appendContent("<br />~$ ");
+                addUiLine();
             }
         } else {
             
@@ -275,5 +283,6 @@
             }
         }
     });
-  
+            
+    addUiLine();
 }());
