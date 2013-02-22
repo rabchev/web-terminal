@@ -48,8 +48,12 @@
             "47"    : ["<span style=\"background-color:white;\">", "</span>"]
         },
         prompt      = "~$",
+        cursorPos   = 0,
         uiLineIdx   = 0,
-        uiLineEl;
+        uiLineWrp,
+        uiLineCnt,
+        uiLineSuf,
+        cursor;
     
     function parseVT100(i, data, closures) {
         var code    = "",
@@ -135,18 +139,37 @@
         }, 500);
     }
     
-    function appendLine() {
-        if (currentLine.length > 0) {
-            content.html(content.html().slice(0, currentLine.length * -1));
-        }
+    function recall() {
         currentLine = lines[linePos];
-        appendContent(currentLine);
+        uiLineCnt.text(currentLine);
+        cursorPos = currentLine.length;
     }
     
-    function addUiLine() {
+    function clearCursor() {
+        cursor.remove();
+        uiLineSuf.remove();
+        uiLineCnt.text(currentLine);
+    }
+    
+    function moveCursor() {
+        uiLineCnt.text(currentLine.substr(0, cursorPos));
+        if (cursorPos === currentLine.length) {
+            cursor.html("&nbsp;");
+            uiLineSuf.text("");
+        } else {
+            cursor.text(currentLine[cursorPos]);
+            uiLineSuf.text(currentLine.substr(cursorPos + 1));
+        }
+    }
+    
+    function addNewLine() {
         var id = "ln" + ++uiLineIdx;
-        appendContent("<p id=\"" + id + "\">" + prompt + "<span id=\"cursor\" class=\"inverse\">&nbsp;</span></p>");
-        uiLineEl = $("#" + id);
+        appendContent("<p id=\"" + id + "\">" + prompt + "<span id=\"lnCnt\"></span><span id=\"cursor\" class=\"inverse\">&nbsp;</span><span id=\"lnSuf\"></span></p>");
+        uiLineWrp = $("#" + id);
+        uiLineCnt = uiLineWrp.find("#lnCnt");
+        uiLineSuf = uiLineWrp.find("#lnSuf");
+        cursor = uiLineWrp.find("#cursor");
+        cursorPos = 0;
     }
     
     function convertToHtml(data) {
@@ -216,23 +239,55 @@
     }
     
     $(window.document).keydown(function (e) {
+        var part1, part2;
+                        
         switch (e.keyCode) {
         case 8:
             if (currentLine.length > 0) {
-                currentLine = currentLine.slice(0, -1);
-                content.html(content.html().slice(0, -1));
+                if (cursorPos === currentLine.length) {
+                    currentLine = currentLine.slice(0, -1);
+                } else {
+                    part1 = currentLine.substr(0, cursorPos - 1);
+                    part2 = currentLine.substr(cursorPos);
+                    currentLine = part1 + part2;
+                }
+                
+                cursorPos--;
+                moveCursor();
+            }
+            break;
+        case 46:
+            if (currentLine.length > cursorPos) {
+                
+                part1 = currentLine.substr(0, cursorPos);
+                part2 = currentLine.substr(cursorPos + 1);
+                currentLine = part1 + part2;
+                
+                moveCursor();
             }
             break;
         case 38:
             if (linePos < lines.length - 1) {
                 linePos++;
-                appendLine();
+                recall();
             }
             return false;
         case 40:
             if (linePos > 0) {
                 linePos--;
-                appendLine();
+                recall();
+            }
+            return false;
+        case 37:
+            if (cursorPos > 0) {
+                cursorPos--;
+                moveCursor();
+            }
+            return false;
+        case 39:
+            if (cursorPos <= currentLine.length) {
+                cursorPos++;
+                moveCursor();
             }
             return false;
         }
@@ -242,7 +297,7 @@
         if (data) {
             appendContent(data);
         }
-        addUiLine();
+        addNewLine();
     });
     
     socket.on("console", function (data) {
@@ -251,11 +306,14 @@
   
     $(window.document).keypress(function (e) {
         
-        var letter = String.fromCharCode(e.keyCode);
+        var letter = String.fromCharCode(e.keyCode),
+            part1,
+            part2,
+            str;
   	
         // Handle 'enter'.
         if (e.keyCode === 13) {
-            
+            clearCursor();
             if (currentLine.length > 0) {
                 // Send...
                 if (currentLine === "exit") {
@@ -271,18 +329,28 @@
                     linePos = 0;
                 }
             } else {
-                addUiLine();
+                addNewLine();
             }
         } else {
             
             if (letter) {
-                currentLine += letter;
-                content.append(letter);
+                if (cursorPos === currentLine.length) {
+                    currentLine += letter;
+                } else {
+                    part1 = currentLine.substr(0, cursorPos);
+                    part2 = currentLine.substr(cursorPos);
+                    currentLine = part1 + letter + part2;
+                }
+                if (letter === " ") {
+                    letter = "&nbsp;";
+                }
+                uiLineCnt.append(letter);
+                cursorPos++;
             } else {
                 console.log(e.keyCode);
             }
         }
     });
             
-    addUiLine();
+    addNewLine();
 }());
