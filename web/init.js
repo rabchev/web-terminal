@@ -242,7 +242,7 @@
         var part1, part2;
                         
         switch (e.keyCode) {
-        case 8:
+        case 8: // Backspace
             if (currentLine.length > 0) {
                 if (cursorPos === currentLine.length) {
                     currentLine = currentLine.slice(0, -1);
@@ -256,7 +256,7 @@
                 moveCursor();
             }
             break;
-        case 46:
+        case 46: // Delete
             if (currentLine.length > cursorPos) {
                 
                 part1 = currentLine.substr(0, cursorPos);
@@ -266,25 +266,25 @@
                 moveCursor();
             }
             break;
-        case 38:
+        case 38: // Up Arrow
             if (linePos < lines.length - 1) {
                 linePos++;
                 recall();
             }
             return false;
-        case 40:
+        case 40: // Down Arrow
             if (linePos > 0) {
                 linePos--;
                 recall();
             }
             return false;
-        case 37:
+        case 37: // Left Arrow
             if (cursorPos > 0) {
                 cursorPos--;
                 moveCursor();
             }
             return false;
-        case 39:
+        case 39: // Right Arrow
             if (cursorPos <= currentLine.length) {
                 cursorPos++;
                 moveCursor();
