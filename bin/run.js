@@ -11,9 +11,15 @@ var connect     = require("connect"),
 
 if (commander.options.length === 0) {
     commander
-            .version(pkg.version)
-            .option("-p, --port <port>", "Cpecifies the TCP port for the HTTP server.")
-            .option("-s, --ssl", "Start HTTP server over secure socket layer.");
+        .version(pkg.version)
+        .option("-p, --port <port>", "Cpecifies the TCP port for the HTTP server.")
+        .option("-s, --ssl", "Start HTTP server over secure socket layer.")
+        .option("-h, --shell <shell>", "Executes commands in the specified command shell. Example: --shell bash")
+        .parse(process.argv);
+}
+
+if (commander.shell) {
+    process.env.shell = commander.shell;
 }
 
 shell(commander.port);

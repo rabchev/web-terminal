@@ -292,6 +292,17 @@
             return false;
         }
     });
+                        
+    $(window.document).keyup(function (e) {
+        if (e.ctrlKey) {
+            switch (e.keyCode) {
+            case 67:
+                socket.emit("signal", "SIGINT");
+                appendContent("^C");
+                break;
+            }
+        }
+    });
     
     socket.on("exit", function (data) {
         if (data) {

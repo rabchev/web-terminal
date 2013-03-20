@@ -7,7 +7,7 @@
         { "name": "Boyan Rabchev", "email": "boyan@rabchev.com" }
     ],
     "config": {
-        "port": "80",
+        "port": "8088",
         "root": "/terminal",
         "requireSSL": "false",
         "key": "",
