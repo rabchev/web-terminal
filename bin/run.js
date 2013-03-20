@@ -1,4 +1,4 @@
-//#!/usr/bin/env node
+#!/usr/bin/env node
 
 /*jslint plusplus: true, devel: true, nomen: true, node: true, vars: true, indent: 4, maxerr: 50 */
 /*global require, exports, module */
