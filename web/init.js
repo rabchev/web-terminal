@@ -164,7 +164,7 @@
     
     function addNewLine() {
         var id = "ln" + ++uiLineIdx;
-        appendContent("<p id=\"" + id + "\">" + prompt + "<span id=\"lnCnt\"></span><span id=\"cursor\" class=\"inverse\">&nbsp;</span><span id=\"lnSuf\"></span></p>");
+        appendContent("<p id=\"" + id + "\">" + prompt + "&nbsp;<span id=\"lnCnt\"></span><span id=\"cursor\" class=\"inverse\">&nbsp;</span><span id=\"lnSuf\"></span></p>");
         uiLineWrp = $("#" + id);
         uiLineCnt = uiLineWrp.find("#lnCnt");
         uiLineSuf = uiLineWrp.find("#lnSuf");
@@ -306,7 +306,11 @@
     
     socket.on("exit", function (data) {
         if (data) {
-            appendContent(data);
+            if (data.indexOf("cwd: ") === 0) {
+                prompt = data.substr(5) + "$"; 
+            } else {
+                appendContent(data);
+            }
         }
         addNewLine();
     });
@@ -362,6 +366,8 @@
             }
         }
     });
-            
-    addNewLine();
+    
+    $(window).unload(function () {
+        // TODO: see if we need to disconnect
+    });
 }());
