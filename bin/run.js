@@ -19,7 +19,7 @@ if (commander.options.length === 0) {
 }
 
 if (commander.shell) {
-    process.env.shell = commander.shell;
+    process.env.WEB_SHELL = commander.shell;
 }
 
 shell(commander.port);

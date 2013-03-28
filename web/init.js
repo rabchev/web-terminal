@@ -145,10 +145,23 @@
         cursorPos = currentLine.length;
     }
     
-    function clearCursor() {
-        cursor.remove();
-        uiLineSuf.remove();
-        uiLineCnt.text(currentLine);
+    function clearCursor(leavePrompt) {
+        if (cursor) {
+            cursor.remove();
+            cursor = null;
+        }
+        if (uiLineSuf) {
+            uiLineSuf.remove();
+            uiLineSuf = null;
+        }
+        if (uiLineCnt) {
+            if (currentLine.length > 0 || leavePrompt) {
+                uiLineCnt.text(currentLine);
+            } else {
+                uiLineWrp.remove();
+            }
+            uiLineCnt = null;
+        }
     }
     
     function moveCursor() {
@@ -162,9 +175,19 @@
         }
     }
     
+    function addPromptLine() {
+        var id = "ln" + ++uiLineIdx;
+        appendContent("<span id=\"" + id + "\">&nbsp;<span id=\"lnCnt\"></span><span id=\"cursor\" class=\"inverse\">&nbsp;</span><span id=\"lnSuf\"></span></span>");
+        uiLineWrp = $("#" + id);
+        uiLineCnt = uiLineWrp.find("#lnCnt");
+        uiLineSuf = uiLineWrp.find("#lnSuf");
+        cursor = uiLineWrp.find("#cursor");
+        cursorPos = 0;
+    }
+    
     function addNewLine() {
         var id = "ln" + ++uiLineIdx;
-        appendContent("<p id=\"" + id + "\">" + prompt + "&nbsp;<span id=\"lnCnt\"></span><span id=\"cursor\" class=\"inverse\">&nbsp;</span><span id=\"lnSuf\"></span></p>");
+        appendContent("<div id=\"" + id + "\">" + prompt + "&nbsp;<span id=\"lnCnt\"></span><span id=\"cursor\" class=\"inverse\">&nbsp;</span><span id=\"lnSuf\"></span></div>");
         uiLineWrp = $("#" + id);
         uiLineCnt = uiLineWrp.find("#lnCnt");
         uiLineSuf = uiLineWrp.find("#lnSuf");
@@ -305,9 +328,10 @@
     });
     
     socket.on("exit", function (data) {
+        clearCursor();
         if (data) {
             if (data.indexOf("cwd: ") === 0) {
-                prompt = data.substr(5) + "$"; 
+                prompt = data.substr(5) + "$";
             } else {
                 appendContent(data);
             }
@@ -316,7 +340,9 @@
     });
     
     socket.on("console", function (data) {
+        clearCursor();
         appendContent(convertToHtml(data));
+        addPromptLine();
     });
   
     $(window.document).keypress(function (e) {
@@ -328,7 +354,7 @@
   	
         // Handle 'enter'.
         if (e.keyCode === 13) {
-            clearCursor();
+            clearCursor(true);
             if (currentLine.length > 0) {
                 // Send...
                 if (currentLine === "exit") {
@@ -336,6 +362,7 @@
                     window.open('', '_self', '');
                     window.close();
                 } else {
+                    appendContent("<br />");
                     socket.emit("console", currentLine);
                     if (currentLine !== lines[1]) {
                         lines.splice(1, 0, currentLine);
