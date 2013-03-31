@@ -47,13 +47,15 @@
             "46"    : ["<span style=\"background-color:cyan;\">", "</span>"],
             "47"    : ["<span style=\"background-color:white;\">", "</span>"]
         },
-        prompt      = "~$",
+        prompt      = "~",
+        promptChar  = "",
         cursorPos   = 0,
         uiLineIdx   = 0,
         uiLineWrp,
         uiLineCnt,
         uiLineSuf,
-        cursor;
+        cursor,
+        srvOS;
     
     function parseVT100(i, data, closures) {
         var code    = "",
@@ -187,7 +189,7 @@
     
     function addNewLine() {
         var id = "ln" + ++uiLineIdx;
-        appendContent("<div id=\"" + id + "\">" + prompt + "&nbsp;<span id=\"lnCnt\"></span><span id=\"cursor\" class=\"inverse\">&nbsp;</span><span id=\"lnSuf\"></span></div>");
+        appendContent("<div id=\"" + id + "\">" + prompt + promptChar + "&nbsp;<span id=\"lnCnt\"></span><span id=\"cursor\" class=\"inverse\">&nbsp;</span><span id=\"lnSuf\"></span></div>");
         uiLineWrp = $("#" + id);
         uiLineCnt = uiLineWrp.find("#lnCnt");
         uiLineSuf = uiLineWrp.find("#lnSuf");
@@ -323,7 +325,23 @@
                 socket.emit("signal", "SIGINT");
                 appendContent("^C");
                 break;
+            case 68:
+                socket.emit("signal", "SIGQUIT");
+                appendContent("^D");
+                break;
             }
+        }
+    });
+    
+    socket.on("configure", function (data) {
+        if (data.srvOS) {
+            srvOS = data.srvOS;
+        }
+        if (data.prompt || data.prompt === "") {
+            prompt = data.prompt;
+        }
+        if (data.promptChar) {
+            promptChar = data.promptChar;
         }
     });
     
@@ -331,7 +349,7 @@
         clearCursor();
         if (data) {
             if (data.indexOf("cwd: ") === 0) {
-                prompt = data.substr(5) + "$";
+                prompt = data.substr(5) + promptChar;
             } else {
                 appendContent(data);
             }
