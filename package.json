@@ -1,7 +1,7 @@
 {
-    "name": "browser-shell",
-    "description": "",
-    "version": "0.0.2",
+    "name": "web-terminal",
+    "description": "Web-Terminal is a terminal server that provides remote CLI via standard web browser and HTTP protocol.",
+    "version": "0.5.0",
     "author": "Boyan Rabchev <boyan@rabchev.com>",
     "contributors": [ 
         { "name": "Boyan Rabchev", "email": "boyan@rabchev.com" }
@@ -14,7 +14,7 @@
         "cert": "",
         "pfx": ""
     },
-    "repository": "https://github.com/rabchev/node-browser-shell.git",
+    "repository": "https://github.com/rabchev/web-terminal.git",
     "main": "index",
     "preferGlobal": "false",
     "dependencies": {
@@ -38,7 +38,7 @@
     ],
     "preferGlobal": "false",
     "bin": {
-        "browser-shell": "./bin/run.js"
+        "web-terminal": "./bin/run.js"
     },
     "scripts": {
         "start": "node ./bin/run.js"

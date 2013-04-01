@@ -6,7 +6,7 @@
 var connect     = require("connect"),
     util        = require("util"),
     commander   = require("commander"),
-    shell       = require("../"),
+    terminal    = require("../"),
     pkg         = require("../package.json");
 
 if (commander.options.length === 0) {
@@ -22,4 +22,4 @@ if (commander.shell) {
     process.env.WEB_SHELL = commander.shell;
 }
 
-shell(commander.port);
+terminal(commander.port);
