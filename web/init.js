@@ -349,7 +349,7 @@
         clearCursor();
         if (data) {
             if (data.indexOf("cwd: ") === 0) {
-                prompt = data.substr(5) + promptChar;
+                prompt = data.substr(5);
             } else {
                 appendContent(data);
             }
