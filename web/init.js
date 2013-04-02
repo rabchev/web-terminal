@@ -265,9 +265,11 @@
     
     $(window.document).keydown(function (e) {
         var part1, part2;
-                        
+        var charCode = (typeof e.which === "number") ? e.which : e.keyCode;
+        
         switch (e.keyCode) {
         case 8: // Backspace
+            e.stopImmediatePropagation();
             if (currentLine.length > 0) {
                 if (cursorPos === currentLine.length) {
                     currentLine = currentLine.slice(0, -1);
@@ -282,6 +284,7 @@
             }
             break;
         case 46: // Delete
+            e.stopImmediatePropagation();
             if (currentLine.length > cursorPos) {
                 
                 part1 = currentLine.substr(0, cursorPos);
@@ -292,24 +295,28 @@
             }
             break;
         case 38: // Up Arrow
+            e.stopImmediatePropagation();
             if (linePos < lines.length - 1) {
                 linePos++;
                 recall();
             }
             return false;
         case 40: // Down Arrow
+            e.stopImmediatePropagation();
             if (linePos > 0) {
                 linePos--;
                 recall();
             }
             return false;
         case 37: // Left Arrow
+            e.stopImmediatePropagation();
             if (cursorPos > 0) {
                 cursorPos--;
                 moveCursor();
             }
             return false;
         case 39: // Right Arrow
+            e.stopImmediatePropagation();
             if (cursorPos <= currentLine.length) {
                 cursorPos++;
                 moveCursor();
@@ -320,15 +327,18 @@
                         
     $(window.document).keyup(function (e) {
         if (e.ctrlKey) {
-            switch (e.keyCode) {
+            
+            var charCode = (typeof e.which === "number") ? e.which : e.keyCode;
+            
+            switch (charCode) {
             case 67:
+                e.stopImmediatePropagation();
                 socket.emit("signal", "SIGINT");
                 appendContent("^C");
-                break;
             case 68:
+                e.stopImmediatePropagation();
                 socket.emit("signal", "SIGQUIT");
                 appendContent("^D");
-                break;
             }
         }
     });
@@ -365,13 +375,16 @@
   
     $(window.document).keypress(function (e) {
         
-        var letter = String.fromCharCode(e.keyCode),
+        var charCode = (typeof e.which === "number") ? e.which : e.keyCode,
+            letter = String.fromCharCode(charCode),
             part1,
             part2,
             str;
+        
+        e.stopImmediatePropagation();
   	
         // Handle 'enter'.
-        if (e.keyCode === 13) {
+        if (charCode === 13) {
             clearCursor(true);
             if (currentLine.length > 0) {
                 // Send...
@@ -391,24 +404,20 @@
             } else {
                 addNewLine();
             }
-        } else {
+        } else if (letter && letter.match(/^[^\x00-\x1F\x80-\x9F]+$/)) {
             
-            if (letter) {
-                if (cursorPos === currentLine.length) {
-                    currentLine += letter;
-                } else {
-                    part1 = currentLine.substr(0, cursorPos);
-                    part2 = currentLine.substr(cursorPos);
-                    currentLine = part1 + letter + part2;
-                }
-                if (letter === " ") {
-                    letter = "&nbsp;";
-                }
-                uiLineCnt.append(letter);
-                cursorPos++;
+            if (cursorPos === currentLine.length) {
+                currentLine += letter;
             } else {
-                console.log(e.keyCode);
+                part1 = currentLine.substr(0, cursorPos);
+                part2 = currentLine.substr(cursorPos);
+                currentLine = part1 + letter + part2;
             }
+            if (letter === " ") {
+                letter = "&nbsp;";
+            }
+            uiLineCnt.append(letter);
+            cursorPos++;
         }
     });
     
