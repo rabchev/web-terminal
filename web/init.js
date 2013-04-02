@@ -1,4 +1,4 @@
-/*jslint plusplus: true, devel: true, nomen: true, vars: true, continue: true, indent: 4, maxerr: 50 */
+/*jslint plusplus: true, devel: true, nomen: true, vars: true, continue: true, regexp: true, indent: 4, maxerr: 50 */
 /*global window, io, $ */
 
 (function () {
@@ -111,7 +111,7 @@
             i;
         
         for (i = 0; i <= len; i++) {
-            prop = seq[i];
+            prop = seq.charAt(i);
             chld = prnt[prop];
             
             if (!chld) {
@@ -335,10 +335,12 @@
                 e.stopImmediatePropagation();
                 socket.emit("signal", "SIGINT");
                 appendContent("^C");
+                break;
             case 68:
                 e.stopImmediatePropagation();
                 socket.emit("signal", "SIGQUIT");
                 appendContent("^D");
+                break;
             }
         }
     });
