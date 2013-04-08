@@ -1,7 +1,7 @@
 {
     "name": "web-terminal",
     "description": "Web-Terminal is a terminal server that provides remote CLI via standard web browser and HTTP protocol.",
-    "version": "0.6.1",
+    "version": "0.6.2",
     "author": "Boyan Rabchev <boyan@rabchev.com>",
     "contributors": [ 
         { "name": "Boyan Rabchev", "email": "boyan@rabchev.com" }
@@ -14,7 +14,10 @@
         "cert": "",
         "pfx": ""
     },
-    "repository": "https://github.com/rabchev/web-terminal.git",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/rabchev/web-terminal.git"
+    },
     "main": "index",
     "preferGlobal": "false",
     "dependencies": {
@@ -44,7 +47,16 @@
         "web-terminal": "./bin/run.js"
     },
     "scripts": {
-        "start": "node ./bin/run.js"
+        "start": "node ./bin/run.js",
+        "test": "node test"
+    },
+    "bugs": {
+        "email": "boyan@rabchev.com",
+        "url": "https://github.com/rabchev/web-terminal/issues"
+    },
+    "license": {
+        "type": "MIT",
+        "url": "http://github.com/rabchev/web-terminal/blob/master/LICENSE"
     },
     "engines": { "node": ">=0.10" }
 }
