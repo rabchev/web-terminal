@@ -1,7 +1,7 @@
 {
     "name": "web-terminal",
     "description": "Web-Terminal is a terminal server that provides remote CLI via standard web browser and HTTP protocol.",
-    "version": "0.6.2",
+    "version": "0.6.3",
     "author": "Boyan Rabchev <boyan@rabchev.com>",
     "contributors": [ 
         { "name": "Boyan Rabchev", "email": "boyan@rabchev.com" }
