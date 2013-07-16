@@ -47,6 +47,7 @@
             "46"    : ["<span style=\"background-color:cyan;\">", "</span>"],
             "47"    : ["<span style=\"background-color:white;\">", "</span>"]
         },
+        scrolling   = false,
         prompt      = "~",
         promptChar  = "",
         cursorPos   = 0,
@@ -136,9 +137,13 @@
     function appendContent(data) {
         content.append(data);
         
-        $("html, body").animate({
-            scrollTop: $(window.document).height()
-        }, 500);
+        if (!scrolling) {
+            scrolling = true;
+            window.setTimeout(function () {
+                $("html, body").animate({ scrollTop: $(window.document).height() }, 500);
+                scrolling = false;
+            }, 10);
+        }
     }
     
     function recall() {

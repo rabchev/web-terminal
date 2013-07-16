@@ -5,28 +5,27 @@ It works on all operating systems supported by Node.js, it doesn't depend on nat
 Fast and easy to install. Supports mutiple sessons. 
 
 Prerequisites
-=============
+-------------
 Node.js v0.10 or newer.
 
 Installation
-============
+------------
 
 Install from npm:
 
     $ npm install web-terminal -g
     
 Usage Examples
-==============
+--------------
 
-Starting web-terminal:
-----------------------
+### Starting web-terminal:
 
     $ web-terminal --port 8088
 
 Open your favorite web browser, navigate to http://localhost:8088 and start playing with the browser based CLI.
 
-Integrating web-terminal with web applications:
------------------------------------------------
+### Integrating web-terminal with web applications:
+```javascript
 
     var http        = require("http"),
         terminal    = require("web-terminal");
@@ -42,13 +41,13 @@ Integrating web-terminal with web applications:
     terminal(app);
     console.log("Web-terminal accessible at http://127.0.0.1:1337/terminal");
     
+```
 Start the above application, then open your favorite browser and navigate to: http://localhost:8088/terminal
 
 Features
-========
+--------
 
-Colors
-------
+### Colors
 Most of the display VT100 escape sequences are translated to HTML. However, Web-terminal doesn't present itself as TTY and 
 therefore most programs won't output escape sequences to **stdout** unless they are explicitly instructed so.
 
@@ -58,20 +57,18 @@ Example configurations:
     
     $ npm config set color always --global
     
-Shell commands
---------------
+### Shell commands
 To execute commands through a shell such as bash or cmd.exe (for windows), an environment variable have to be set:
 
     $ export WEB_SHELL=bash
     
-JavaScript REPL
----------------
+### JavaScript REPL
 To start the REPL, just type **node** without arguments in the browser. 
 Type **.exit** to return to the command prompt. 
 NOTE: REPL is executed on the server, not in the brwoser.
 
 Issues
-======
+------
 Commands that require interaction with TTY cause web-terminal to stop responding.
 
 For instance, commands like sudo that require password from TTY directly cause web-terminal to stop responding. In this case the whole process has to be restarted.
@@ -86,12 +83,12 @@ For Git, passwords have to be stored to avoid this problem:
     $ git config credential.helper store
 
 Security Considerations
-=======================
+-----------------------
 Web-terminal does not provide embedded authentication and encryption mechanisms. 
 Therefore, if the service is exposed to the Internet, it is strongly recommended to require TLS with client certificates or VPN connection.
 
 License
-=======
+-------
 
 (MIT License)
 
