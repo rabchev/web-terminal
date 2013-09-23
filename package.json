@@ -24,10 +24,15 @@
         "send": "*",
         "connect": "*",
         "socket.io": "*",
-        "commander": "*"
+        "commander": "*",
+        "lodash": "*"
     },
     "devDependencies": {
         "nodeunit": "*"
+    },
+    "optionalDependencies": {
+        "authenticate-pam": "*",
+        "uid-number": "*"
     },
     "keywords": [
         "command",
