@@ -3,7 +3,7 @@
 
 (function () {
     "use strict";
-    
+
     var socket      = io.connect(),
         content     = $("#content"),
         lines       = [""],
@@ -48,23 +48,24 @@
             "47"    : ["<span style=\"background-color:white;\">", "</span>"]
         },
         scrolling   = false,
-        prompt      = "~",
+        prompt      = ">",
         promptChar  = "",
         cursorPos   = 0,
         uiLineIdx   = 0,
         uiLineWrp,
         uiLineCnt,
         uiLineSuf,
+        channel,
         cursor,
         srvOS;
-    
+
     function parseVT100(i, data, closures) {
         var code    = "",
             output  = "",
             val,
             curr,
             clsr;
-        
+
         while (true) {
             curr = data[++i];
             if (curr === "m" || curr === ";") {
@@ -72,7 +73,7 @@
                 if (val) {
                     output += val[0];
                     clsr = val[1];
-                    
+
                     if (clsr === true) {
                         closures.pop();
                     } else if (clsr === false) {
@@ -82,7 +83,7 @@
                     } else if (clsr) {
                         closures.push(clsr);
                     }
-                    
+
                     if (curr === ";") {
                         code = "";
                         continue;
@@ -99,29 +100,29 @@
             }
             code += curr;
         }
-        
+
         return { output: output, i: i };
     }
-        
+
     function addSequence(seq, val, closure) {
-        
+
         var prnt    = index,
             len     = seq.length - 1,
             chld,
             prop,
             i;
-        
+
         for (i = 0; i <= len; i++) {
             prop = seq.charAt(i);
             chld = prnt[prop];
-            
+
             if (!chld) {
                 prnt[prop] = chld = (i === len) ? { sequance: seq, value: val, closure: closure} : {};
             }
             prnt = chld;
         }
     }
-    
+
     // Build the index
     //
     addSequence("\n", "<br />");
@@ -129,14 +130,14 @@
     addSequence("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
     addSequence("  ", "&nbsp;&nbsp;");
     addSequence("\x1B[", parseVT100);
-    
+
     window.APP = {
         socket: socket
     };
-    
+
     function appendContent(data) {
         content.append(data);
-        
+
         if (!scrolling) {
             scrolling = true;
             window.setTimeout(function () {
@@ -145,13 +146,13 @@
             }, 10);
         }
     }
-    
+
     function recall() {
         currentLine = lines[linePos];
         uiLineCnt.text(currentLine);
         cursorPos = currentLine.length;
     }
-    
+
     function clearCursor(leavePrompt) {
         if (cursor) {
             cursor.remove();
@@ -170,7 +171,7 @@
             uiLineCnt = null;
         }
     }
-    
+
     function moveCursor() {
         uiLineCnt.text(currentLine.substr(0, cursorPos));
         if (cursorPos === currentLine.length) {
@@ -181,7 +182,7 @@
             uiLineSuf.text(currentLine.substr(cursorPos + 1));
         }
     }
-    
+
     function addPromptLine() {
         var id = "ln" + ++uiLineIdx;
         appendContent("<span id=\"" + id + "\">&nbsp;<span id=\"lnCnt\"></span><span id=\"cursor\" class=\"inverse\">&nbsp;</span><span id=\"lnSuf\"></span></span>");
@@ -191,7 +192,7 @@
         cursor = uiLineWrp.find("#cursor");
         cursorPos = 0;
     }
-    
+
     function addNewLine() {
         var id = "ln" + ++uiLineIdx;
         appendContent("<div id=\"" + id + "\">" + prompt + promptChar + "&nbsp;<span id=\"lnCnt\"></span><span id=\"cursor\" class=\"inverse\">&nbsp;</span><span id=\"lnSuf\"></span></div>");
@@ -201,9 +202,9 @@
         cursor = uiLineWrp.find("#cursor");
         cursorPos = 0;
     }
-    
+
     function convertToHtml(data) {
-        
+
         var i,
             j,
             chr,
@@ -213,8 +214,8 @@
             closures    = [],
             closure,
             res;
-        
-        
+
+
         for (i = 0; i < data.length; i++) {
             chr = data[i];
             idx = idx[chr];
@@ -238,7 +239,7 @@
                 }
             } else {
                 idx = index;
-                
+
                 if (seq > 0) {
                     i = i - seq;
                     seq = 0;
@@ -264,14 +265,14 @@
                 output += chr;
             }
         }
-        
+
         return output;
     }
-    
+
     $(window.document).keydown(function (e) {
         var part1, part2;
         var charCode = (typeof e.which === "number") ? e.which : e.keyCode;
-        
+
         switch (e.keyCode) {
         case 8: // Backspace
             e.stopImmediatePropagation();
@@ -283,7 +284,7 @@
                     part2 = currentLine.substr(cursorPos);
                     currentLine = part1 + part2;
                 }
-                
+
                 cursorPos--;
                 moveCursor();
             }
@@ -291,11 +292,11 @@
         case 46: // Delete
             e.stopImmediatePropagation();
             if (currentLine.length > cursorPos) {
-                
+
                 part1 = currentLine.substr(0, cursorPos);
                 part2 = currentLine.substr(cursorPos + 1);
                 currentLine = part1 + part2;
-                
+
                 moveCursor();
             }
             break;
@@ -329,12 +330,12 @@
             return false;
         }
     });
-                        
+
     $(window.document).keyup(function (e) {
         if (e.ctrlKey) {
-            
+
             var charCode = (typeof e.which === "number") ? e.which : e.keyCode;
-            
+
             switch (charCode) {
             case 67:
                 e.stopImmediatePropagation();
@@ -349,7 +350,7 @@
             }
         }
     });
-    
+
     socket.on("configure", function (data) {
         if (data.srvOS) {
             srvOS = data.srvOS;
@@ -360,8 +361,9 @@
         if (data.promptChar) {
             promptChar = data.promptChar;
         }
+        channel = "console";
     });
-    
+
     socket.on("exit", function (data) {
         clearCursor();
         if (data) {
@@ -373,23 +375,37 @@
         }
         addNewLine();
     });
-    
+
     socket.on("console", function (data) {
         clearCursor();
         appendContent(convertToHtml(data));
         addPromptLine();
     });
-  
+
+    socket.on("username", function () {
+        clearCursor();
+        channel = "username";
+        appendContent("username: ");
+        addNewLine();
+    });
+
+    socket.on("password", function (data) {
+        clearCursor();
+        channel = "password";
+        appendContent("password: ");
+        addNewLine();
+    });
+
     $(window.document).keypress(function (e) {
-        
+
         var charCode = (typeof e.which === "number") ? e.which : e.keyCode,
             letter = String.fromCharCode(charCode),
             part1,
             part2,
             str;
-        
+
         e.stopImmediatePropagation();
-  	
+
         // Handle 'enter'.
         if (charCode === 13) {
             clearCursor(true);
@@ -401,7 +417,7 @@
                     window.close();
                 } else {
                     appendContent("<br />");
-                    socket.emit("console", currentLine);
+                    socket.emit(channel, currentLine);
                     if (currentLine !== lines[1]) {
                         lines.splice(1, 0, currentLine);
                     }
@@ -412,7 +428,7 @@
                 addNewLine();
             }
         } else if (letter && letter.match(/^[^\x00-\x1F\x80-\x9F]+$/)) {
-            
+
             if (cursorPos === currentLine.length) {
                 currentLine += letter;
             } else {
@@ -427,7 +443,7 @@
             cursorPos++;
         }
     });
-    
+
     $(window).unload(function () {
         // TODO: see if we need to disconnect
     });
