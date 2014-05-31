@@ -2,7 +2,7 @@ Web-Terminal
 ============
 Web-Terminal is a terminal server that provides remote CLI via standard web browser and HTTP protocol. 
 It works on all operating systems supported by Node.js, it doesn't depend on native modules and it is not a TTY emulator. 
-Fast and easy to install. Supports mutiple sessons. 
+Fast and easy to install. Supports mutiple sessions. 
 
 Prerequisites
 -------------
