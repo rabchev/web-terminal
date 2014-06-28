@@ -1,11 +1,8 @@
 #!/usr/bin/env node
 
 /*jslint plusplus: true, devel: true, nomen: true, node: true, vars: true, indent: 4, maxerr: 50 */
-/*global require, exports, module */
 
-var connect     = require("connect"),
-    util        = require("util"),
-    commander   = require("commander"),
+var commander   = require("commander"),
     terminal    = require("../"),
     pkg         = require("../package.json");
 

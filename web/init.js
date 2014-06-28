@@ -206,13 +206,11 @@
     function convertToHtml(data) {
 
         var i,
-            j,
             chr,
             output      = "",
             idx         = index,
             seq         = 0,
             closures    = [],
-            closure,
             res;
 
 
@@ -271,7 +269,6 @@
 
     $(window.document).keydown(function (e) {
         var part1, part2;
-        var charCode = (typeof e.which === "number") ? e.which : e.keyCode;
 
         switch (e.keyCode) {
         case 8: // Backspace
@@ -385,11 +382,11 @@
     socket.on("username", function () {
         clearCursor();
         channel = "username";
-        appendContent("username: ");
+        appendContent("<br/>username: ");
         addNewLine();
     });
 
-    socket.on("password", function (data) {
+    socket.on("password", function () {
         clearCursor();
         channel = "password";
         appendContent("password: ");
@@ -401,8 +398,7 @@
         var charCode = (typeof e.which === "number") ? e.which : e.keyCode,
             letter = String.fromCharCode(charCode),
             part1,
-            part2,
-            str;
+            part2;
 
         e.stopImmediatePropagation();
 
