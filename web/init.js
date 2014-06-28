@@ -191,6 +191,10 @@
         uiLineSuf = uiLineWrp.find("#lnSuf");
         cursor = uiLineWrp.find("#cursor");
         cursorPos = 0;
+
+	// Trigger a global event
+	console.log('cursor:ready');
+	$(window).trigger('cursor:ready');
     }
 
     function addNewLine() {
@@ -201,6 +205,10 @@
         uiLineSuf = uiLineWrp.find("#lnSuf");
         cursor = uiLineWrp.find("#cursor");
         cursorPos = 0;
+
+	// Trigger a global event
+	console.log('cursor:ready');
+	$(window).trigger('cursor:ready');
     }
 
     function convertToHtml(data) {

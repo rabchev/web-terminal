@@ -13,6 +13,8 @@ body {
 }
 
 #hidden-input {
-    position: absolute;
-    top: -100px;
+    opacity: 0;
+    width: 0px;
+    color: transparent;
+    outline: none;
 }

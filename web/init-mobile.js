@@ -8,13 +8,28 @@
     var mobileAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
     if(mobileAgent.test(navigator.userAgent)) {
 	console.log("Running on mobile device");
-	// Insert hidden input
-	$('body').append('<input type="text" id="hidden-input"/>');
-	// Bind events
-	var content = $("#content");
-	content.click(function (e) {
-	    $("#hidden-input").focus();
+	$(window).on('cursor:ready', function (e) {
+	    
+	    // Insert hidden input
+	    var input = $("#hidden-input");
+	    if (input.length == 0) {
+		input = $('<input type="text" id="hidden-input"/>');
+	    }
+	    input.text("");
+	    input.appendTo($('#cursor').parent());
+
+	    // Bind events
+	    var content = $("#content");
+	    content.click(function (e) {
+		$("#hidden-input").focus();
+	    });
+	    // Focus when added
+	    // Not a bug: This won't work for some mobile browser like mobile Safari.
+	    // It is by design that mobile safari ignores certain focus() call except
+	    // ones originated from a touch event handler.
+	    // This will cause virtual keyboard to disapear every time a command line 
+	    // is committed
+	    //$("#hidden-input").focus();
 	});
     }
-    console.log("Not on mobile device");
 }());
