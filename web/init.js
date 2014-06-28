@@ -267,6 +267,10 @@
         return output;
     }
 
+    content.click(function (e) {
+	$("#hidden-input").focus();
+    });
+
     $(window.document).keydown(function (e) {
         var part1, part2;
 
