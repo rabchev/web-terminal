@@ -193,7 +193,6 @@
         cursorPos = 0;
 
 	// Trigger a global event
-	console.log('cursor:ready');
 	$(window).trigger('cursor:ready');
     }
 
@@ -207,7 +206,6 @@
         cursorPos = 0;
 
 	// Trigger a global event
-	console.log('cursor:ready');
 	$(window).trigger('cursor:ready');
     }
 
