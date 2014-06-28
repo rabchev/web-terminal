@@ -137,8 +137,10 @@
 
     function appendContent(data) {
         content.append(data);
-
-        if (!scrolling) {
+	// Magic number, this fix buggy scroll behavior on mobile browsers
+	// when the content height is shorter than window's height.
+	var mobile_magic = 0.7;
+        if (!scrolling && content.height() > $(window.document).height() * mobile_magic) {
             scrolling = true;
             window.setTimeout(function () {
                 $("html, body").animate({ scrollTop: $(window.document).height() }, 500);
