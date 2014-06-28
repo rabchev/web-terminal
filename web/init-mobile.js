@@ -7,16 +7,15 @@
     // Code for mobile device only
     var mobileAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
     if(mobileAgent.test(navigator.userAgent)) {
-	console.log("Running on mobile device");
 	$(window).on('cursor:ready', function (e) {
 	    
 	    // Insert hidden input
 	    var input = $("#hidden-input");
 	    if (input.length == 0) {
 		input = $('<input type="text" id="hidden-input"/>');
+		$('body').append(input);
 	    }
-	    input.text("");
-	    input.appendTo($('#cursor').parent());
+	    input.val("");
 
 	    // Bind events
 	    var content = $("#content");
