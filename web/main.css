@@ -11,3 +11,8 @@ body {
     background-color: #FFFFFF;
 	color: #290029;
 }
+
+#hidden-input {
+    position: absolute;
+    top: -100px;
+}

@@ -267,6 +267,10 @@
         return output;
     }
 
+    content.click(function () {
+       $("#hidden-input").focus();
+    });
+
     $(window.document).keydown(function (e) {
         var part1, part2;
 
@@ -285,7 +289,7 @@
                 cursorPos--;
                 moveCursor();
             }
-            break;
+            return false;
         case 46: // Delete
             e.stopImmediatePropagation();
             if (currentLine.length > cursorPos) {
@@ -296,7 +300,7 @@
 
                 moveCursor();
             }
-            break;
+            return false;
         case 38: // Up Arrow
             e.stopImmediatePropagation();
             if (linePos < lines.length - 1) {
