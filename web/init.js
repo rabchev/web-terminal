@@ -137,8 +137,10 @@
 
     function appendContent(data) {
         content.append(data);
-
-        if (!scrolling) {
+	// Magic number, this fix buggy scroll behavior on mobile browsers
+	// when the content height is shorter than window's height.
+	var mobile_magic = 0.7;
+        if (!scrolling && content.height() > $(window.document).height() * mobile_magic) {
             scrolling = true;
             window.setTimeout(function () {
                 $("html, body").animate({ scrollTop: $(window.document).height() }, 500);
@@ -191,6 +193,9 @@
         uiLineSuf = uiLineWrp.find("#lnSuf");
         cursor = uiLineWrp.find("#cursor");
         cursorPos = 0;
+
+	// Trigger a global event
+	$(window).trigger('cursor:ready');
     }
 
     function addNewLine() {
@@ -201,6 +206,9 @@
         uiLineSuf = uiLineWrp.find("#lnSuf");
         cursor = uiLineWrp.find("#cursor");
         cursorPos = 0;
+
+	// Trigger a global event
+	$(window).trigger('cursor:ready');
     }
 
     function convertToHtml(data) {
@@ -266,10 +274,6 @@
 
         return output;
     }
-
-    content.click(function (e) {
-	$("#hidden-input").focus();
-    });
 
     $(window.document).keydown(function (e) {
         var part1, part2;
