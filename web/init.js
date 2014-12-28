@@ -132,7 +132,9 @@
     addSequence("\x1B[", parseVT100);
 
     window.APP = {
-        socket: socket
+        socket: socket,
+        input: [],
+        output: []
     };
 
     function appendContent(data) {
@@ -272,7 +274,7 @@
             }
         }
 
-        return output;
+        return '<div class="output">' + output + '</div>';
     }
 
     $(window.document).keydown(function (e) {
@@ -383,6 +385,7 @@
 
     socket.on("console", function (data) {
         clearCursor();
+        window.APP.output.push(data);
         appendContent(convertToHtml(data));
         addPromptLine();
     });
@@ -413,6 +416,7 @@
         // Handle 'enter'.
         if (charCode === 13) {
             clearCursor(true);
+            window.APP.input.push(currentLine);
             if (currentLine.length > 0) {
                 // Send...
                 if (currentLine === "exit") {
