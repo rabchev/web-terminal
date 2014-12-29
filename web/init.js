@@ -13,6 +13,7 @@
         vt100       = {
             ""      : ["", false],
             "0"     : ["", false],
+            "00"    : ["", false],
             "1"     : ["<b>", "</b>"],
             "01"    : ["<b>", "</b>"],
             "22"    : ["</b>", true],
@@ -45,7 +46,8 @@
             "44"    : ["<span style=\"background-color:blue;\">", "</span>"],
             "45"    : ["<span style=\"background-color:magenta;\">", "</span>"],
             "46"    : ["<span style=\"background-color:cyan;\">", "</span>"],
-            "47"    : ["<span style=\"background-color:white;\">", "</span>"]
+            "47"    : ["<span style=\"background-color:white;\">", "</span>"],
+            "49"    : ["", false]
         },
         scrolling   = false,
         prompt      = ">",
