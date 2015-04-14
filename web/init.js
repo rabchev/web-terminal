@@ -61,6 +61,28 @@
         cursor,
         srvOS;
 
+    // The exec function
+    var exec = function(cmd, callback) {
+      var stdout = ''
+      var socket = io.connect()
+      socket.once("exit", function (data) {
+        callback(stdout)
+      });
+
+      socket.on("console", function (data) {
+        stdout += data
+      });
+
+      currentLine = cmd
+      var e = jQuery.Event("keypress")
+      e.which = 13
+      e.keyCode = 13
+      $(window.document).trigger(e)
+    }
+    window.exec = exec
+
+    if (window.hasOwnProperty('parent')) window.parent.exec = exec
+
     function parseVT100(i, data, closures) {
         var code    = "",
             output  = "",
