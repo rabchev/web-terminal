@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+<div id="content">hola earth</div>
+
+<script>
+var get = function() {
+  return document.getElementById("content").innerHTML
+}
+window.parent.get = get
+</script>
+
+</body>
+
+</html>
