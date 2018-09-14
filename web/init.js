@@ -224,9 +224,9 @@
     $(window).trigger('cursor:ready');
     }
 
-    function addNewLine() {
+    function addNewLine(hidden) {
         var id = "ln" + ++uiLineIdx;
-        appendContent("<div id=\"" + id + "\">" + prompt + promptChar + "&nbsp;<span id=\"lnCnt\"></span><span id=\"cursor\" class=\"inverse\">&nbsp;</span><span id=\"lnSuf\"></span></div>");
+        appendContent("<div id=\"" + id + "\">" + prompt + promptChar + "&nbsp;<span id=\"lnCnt\"" + (hidden?" style=display:none":"") + "></span><span id=\"cursor\" class=\"inverse\">&nbsp;</span><span id=\"lnSuf\"></span></div>");
         uiLineWrp = $("#" + id);
         uiLineCnt = uiLineWrp.find("#lnCnt");
         uiLineSuf = uiLineWrp.find("#lnSuf");
@@ -425,7 +425,7 @@
         clearCursor();
         channel = "password";
         appendContent("password: ");
-        addNewLine();
+        addNewLine(true);
     });
 
     $(window.document).keypress(function (e) {
